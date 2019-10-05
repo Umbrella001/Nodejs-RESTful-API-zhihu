@@ -24,7 +24,11 @@ const userSchema = new Schema({
           graduation_years: { type: Number }  
         }],select:false
     },
-    test:{type:[{type: String}],select:false}
+    test:{type:[{type: String}],select:false},
+    following: {
+        type:[{ type:Schema.Types.ObjectId, ref: 'User' }], // 也就是说可以根据id查到当前User模型中的用户信息(引用)
+        select: false
+    }
 })
 
 module.exports = model('User',userSchema);

@@ -65,6 +65,47 @@ class UsersCtl{
         const token = jwt.sign({ _id,name },secret,{expiresIn: 86400});
         ctx.body = { token };
     }
+
+    async checkUserExist(ctx,next){
+        const user = await User.findById(ctx.params.id);
+        if(!user){ctx.throw(404,'用户不存在')}
+        await next();
+    }
+
+    async listFollowing(ctx){
+        const user = await User.findById(ctx.params.id).select('+following').populate('following');
+        if(!user){ ctx.throw(404,"用户不存在")};
+        ctx.body = user.following;
+    }
+
+    async follow(ctx){
+        const me = await User.findById(ctx.state.user._id).select('+following');
+        if(ctx.params.id !== ctx.state.user._id){
+            if(!me.following.map(id => id.toString()).includes(ctx.params.id)){
+                me.following.push(ctx.params.id);
+                me.save();
+            }
+            ctx.status = 204;
+        }else{
+            ctx.throw(401,'不能关注自己')
+        }
+    }
+
+    async unfollow(ctx){
+        const me = await User.findById(ctx.state.user._id).select('+following');
+        const index = await me.following.map(id => id.toString()).indexOf(ctx.params.id);
+        if(index > -1){
+            me.following.splice(index,1);
+            me.save()
+        }
+        ctx.status = 204;
+    }
+
+    async listFollowers(ctx){
+        const followers = await User.find({ following: ctx.params.id });
+        ctx.body = followers;
+    }
+
 }
 
 module.exports = new UsersCtl();
