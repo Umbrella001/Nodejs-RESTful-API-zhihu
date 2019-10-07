@@ -3,7 +3,7 @@ const router = new Router({prefix:'/users'});
 const jwt = require('koa-jwt');
 const { secret } = require('../config');
 const {
-    creatUser,
+    createUser,
     getUsers,
     getUserId,
     updateUsers,
@@ -19,7 +19,7 @@ const {
 
 const auth = jwt({ secret });
 
-router.post('/',creatUser)
+router.post('/',createUser)
 
 router.get('/',getUsers)
 

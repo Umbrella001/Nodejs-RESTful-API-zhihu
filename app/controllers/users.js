@@ -3,7 +3,7 @@ const User = require('../models/users'); // 导入用户模型
 const { secret } = require('../config');
 
 class UsersCtl{
-    async creatUser(ctx){
+    async createUser(ctx){
         ctx.verifyParams({
             name:{type:"string",required: false},
             password:{type:"string",require: false}
@@ -20,7 +20,7 @@ class UsersCtl{
     }
 
     async getUserId(ctx){
-        const { fields } = ctx.query;
+        const { fields = '' } = ctx.query;
         const selectFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('');
         console.log('++++++++++++++++',selectFields);
         const user = await User.findById(ctx.params.id).select(selectFields);
