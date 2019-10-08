@@ -16,7 +16,14 @@ class UsersCtl{
     }
     async getUsers(ctx){
         const user = await User.find();
-        ctx.body = user;
+        const { page = 1, per_page = 10 } = ctx.query;
+        const pages = Math.max(page * 1, 1) - 1;
+        const perPage =  Math.max(per_page * 1, 1);
+        if(pages * perPage < user.length){
+            ctx.body = await User.find().limit(perPage).skip(pages * perPage);
+        }else{
+            ctx.throw(401,'当前页数超过展示信息的条数');
+        }
     }
 
     async getUserId(ctx){
