@@ -1,4 +1,5 @@
 const Topic = require('../models/topics'); // 导入用户模型
+const User = require('../models/users');
 
 class TopicsCtl{
     async getTopics(ctx){
@@ -7,7 +8,7 @@ class TopicsCtl{
         const pages = Math.max(page * 1, 1) - 1;
         const perPage =  Math.max(per_page * 1, 1);
         if(pages * perPage < topics.length){
-            ctx.body = await Topic.find().limit(perPage).skip(pages * perPage);
+            ctx.body = await Topic.find({name: new RegExp(ctx.query.q)}).limit(perPage).skip(pages * perPage);
         }else{
             ctx.throw(401,'当前页数超过展示信息的条数');
         }
@@ -37,6 +38,18 @@ class TopicsCtl{
         });
         const newTopic = await Topic.findByIdAndUpdate(ctx.params.id, ctx.request.body);
         ctx.body = newTopic;
+    }
+
+    async checkTopicExist(ctx,next){
+        const topic = await Topic.findById(ctx.params.id);
+        if(!topic){ctx.throw(404,'话题不存在')}
+        await next();
+    }
+
+    
+    async listFollowTopics(ctx){
+        const followTopics = await User.find({ followingTopics: ctx.params.id });
+        ctx.body = followTopics;
     }
 }
 

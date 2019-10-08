@@ -34,20 +34,25 @@ const userSchema = new Schema({
     },
     locations: {
         type: [{
-            type: String
+            type: Schema.Types.ObjectId,
+            ref:'Topic'
         }],
         select: false
     },
     business: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref:'Topic',
+        select: false
     },
     employments: {
         type: [{
             company: {
-                type: String
+                type: Schema.Types.ObjectId,
+                ref:'Topic'
             },
             job: {
-                type: String
+                type: Schema.Types.ObjectId,
+                ref:'Topic'
             }
         }],
         select: false
@@ -55,10 +60,12 @@ const userSchema = new Schema({
     educations: {
         type: [{
             school: {
-                type: String
+                type: Schema.Types.ObjectId,
+                ref:'Topic'
             },
             major: {
-                type: String
+                type: Schema.Types.ObjectId,
+                ref:'Topic'
             },
             diploma: {
                 type: Number,
@@ -84,6 +91,13 @@ const userSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'User'
         }], // 也就是说可以根据id查到当前User模型中的用户信息(引用)
+        select: false
+    },
+    followingTopics:{
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Topic'
+        }],
         select: false
     }
 })

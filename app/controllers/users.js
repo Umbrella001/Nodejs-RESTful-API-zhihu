@@ -20,7 +20,7 @@ class UsersCtl{
         const pages = Math.max(page * 1, 1) - 1;
         const perPage =  Math.max(per_page * 1, 1);
         if(pages * perPage < user.length){
-            ctx.body = await User.find().limit(perPage).skip(pages * perPage);
+            ctx.body = await User.find({name: new RegExp(ctx.query.q)}).limit(perPage).skip(pages * perPage);
         }else{
             ctx.throw(401,'当前页数超过展示信息的条数');
         }
@@ -29,8 +29,17 @@ class UsersCtl{
     async getUserId(ctx){
         const { fields = '' } = ctx.query;
         const selectFields = fields.split(';').filter(f => f).map(f => ' +' + f).join('');
-        console.log('++++++++++++++++',selectFields);
-        const user = await User.findById(ctx.params.id).select(selectFields);
+        const populateStr = fields.split(';').filter(p => p).map(p => {
+            if(p === 'employments'){
+                return 'employments.company employments.job';
+            }else if(p === 'educations'){
+                return 'educations.school educations.major';
+            }else{
+                return p;
+            } 
+        }).join(' ');
+        const user = await User.findById(ctx.params.id).select(selectFields)
+        .populate(populateStr);
         if(!user){ ctx.throw(404,"用户不存在")};
         ctx.body = user;
     }
@@ -113,6 +122,34 @@ class UsersCtl{
         ctx.body = followers;
     }
 
+    async followTopic(ctx){
+        const me = await User.findById(ctx.state.user._id).select('+followingTopics');
+        if(ctx.params.id !== ctx.state.user._id){
+            if(!me.followingTopics.map(id => id.toString()).includes(ctx.params.id)){
+                me.followingTopics.push(ctx.params.id);
+                me.save();
+            }
+            ctx.status = 204;
+        }else{
+            ctx.throw(401,'不能关注自己')
+        }
+    }
+
+    async unfollowTopic(ctx){
+        const me = await User.findById(ctx.state.user._id).select('+followingTopics');
+        const index = await me.followingTopics.map(id => id.toString()).indexOf(ctx.params.id);
+        if(index > -1){
+            me.followingTopics.splice(index,1);
+            me.save()
+        }
+        ctx.status = 204;
+    }
+
+    async listFollowingTopics(ctx){
+        const user = await User.findById(ctx.params.id).select('+followingTopics').populate('followingTopics');
+        if(!user){ ctx.throw(404,"用户不存在")};
+        ctx.body = user.followingTopics;
+    }
 }
 
 module.exports = new UsersCtl();
