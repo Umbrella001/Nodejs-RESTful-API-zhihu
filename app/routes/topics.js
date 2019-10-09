@@ -8,7 +8,8 @@ const {
     createTopic,
     updateTopic,
     listFollowTopics,
-    checkTopicExist
+    checkTopicExist,
+    listQuestions
 } = require('../controllers/topics');
 
 const auth = jwt({ secret });
@@ -18,6 +19,8 @@ router.post('/',auth, createTopic)
 router.get('/',getTopics)
 
 router.get('/:id',checkTopicExist,getTopicId)
+
+router.get('/:id/questions',checkTopicExist,listQuestions)
 
 router.patch('/:id',auth,checkTopicExist,updateTopic)
 

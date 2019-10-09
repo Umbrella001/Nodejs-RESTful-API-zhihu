@@ -17,7 +17,8 @@ const {
     checkUserExist,
     followTopic,
     unfollowTopic,
-    listFollowingTopics
+    listFollowingTopics,
+    listQuestions
 } = require('../controllers/users');
 
 const { checkTopicExist } = require('../controllers/topics');
@@ -49,5 +50,7 @@ router.put('/followTopic/:id',auth,checkTopicExist,followTopic)
 router.delete('/followTopic/:id',auth,checkTopicExist,unfollowTopic)
 
 router.get('/:id/followingTopics',checkUserExist,listFollowingTopics)
+
+router.get('/:id/questions',listQuestions)
 
 module.exports = router;

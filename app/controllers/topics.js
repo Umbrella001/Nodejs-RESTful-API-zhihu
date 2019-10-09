@@ -1,5 +1,6 @@
 const Topic = require('../models/topics'); // 导入用户模型
 const User = require('../models/users');
+const Question = require('../models/questions');
 
 class TopicsCtl{
     async getTopics(ctx){
@@ -50,6 +51,11 @@ class TopicsCtl{
     async listFollowTopics(ctx){
         const followTopics = await User.find({ followingTopics: ctx.params.id });
         ctx.body = followTopics;
+    }
+
+    async listQuestions(ctx){
+        const questions = await Question.find({ topics: ctx.params.id })
+        ctx.body = questions;
     }
 }
 
