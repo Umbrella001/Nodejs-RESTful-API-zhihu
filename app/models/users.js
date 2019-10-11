@@ -99,6 +99,27 @@ const userSchema = new Schema({
             ref: 'Topic'
         }],
         select: false
+    },
+    listLikingAnswers:{
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Answer'
+        }],
+        select: false
+    },
+    listDisLikingAnswers:{
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Answer'
+        }],
+        select: false
+    },
+    listCollectAnswers:{
+        type: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Answer'
+        }],
+        select: false
     }
 })
 
