@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const { Schema, model } = mongoose;
 
-const answerSchema = new Schema({
+const commentSchema = new Schema({
     __v:{type: Number,select:false},
     content:{type: String, required: true},
-    answerer:{
+    commentator:{
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -17,16 +17,20 @@ const answerSchema = new Schema({
         required: true,
         select: true
     },
-    praise:{
-        type: Number,
+    answerId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Answer',
         required: true,
-        default: 0
+        select: true
     },
-    oppose:{
-        type: Number,
-        required: true,
-        default: 0 
+    rootCommentId:{
+        type: String,
+        required: true
+    },
+    replyTo:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 },{timestamps: true})
 
-module.exports = model('Answer',answerSchema);
+module.exports = model('Comment',commentSchema);

@@ -19,6 +19,6 @@ const questionSchema = new Schema({
         }], // 也就是说可以根据id查到当前User模型中的用户信息(引用)
         select: false
     },
-})
+},{timestamps: true})
 
 module.exports = model('Question',questionSchema);

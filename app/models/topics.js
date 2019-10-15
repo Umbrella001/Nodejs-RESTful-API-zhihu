@@ -7,6 +7,6 @@ const topicSchema = new Schema({
     name: {type: String, required: true},
     introduction: {type: String, select: false},
     avatar_url:{type: String}
-})
+},{timestamps: true})
 
 module.exports = model('Topic',topicSchema);
